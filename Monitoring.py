@@ -39,13 +39,13 @@ count_Styrofoam = 0
 count_PET = 0
 
 RawImgIdx = 0
-for i, Img in enumerate(ListImg):
+for Img_i, Img in enumerate(ListImg):
 
 	# Load Img
 	RawImg = cv2.imread(MPath + Img, cv2.IMREAD_COLOR)
 
 	print('================================================')
-	print('Image %d Loaded' % i)
+	print('Image %d Loaded' % Img_i)
 	print('')
 
 	# print(Img)
@@ -55,12 +55,11 @@ for i, Img in enumerate(ListImg):
 	print('Image GPS Information Loaded')
 	print('Lat : %f   Lon : %f' % (ImgLat, ImgLon))
 
-	DataTable[i, 0] = ImgLat
-	DataTable[i, 1] = ImgLon
+	DataTable[Img_i, 0] = ImgLat
+	DataTable[Img_i, 1] = ImgLon
 
 	Img_count_Styrofoam = 0
 	Img_count_PET = 0
-
 
 	ExportImgName = ExportImgPath + str(RawImgIdx) + '.jpg'
 
@@ -127,8 +126,8 @@ for i, Img in enumerate(ListImg):
 
 
 	# Merge
-	DataTable[i, 2] = Img_count_Styrofoam
-	DataTable[i, 3] = Img_count_PET
+	DataTable[Img_i, 2] = Img_count_Styrofoam
+	DataTable[Img_i, 3] = Img_count_PET
 
 	print('')
 	print('[Styrofoam : %d]  [PET : %d]' % (Img_count_Styrofoam, Img_count_PET))
@@ -140,6 +139,18 @@ for i, Img in enumerate(ListImg):
 	RawImgIdx = RawImgIdx + 1
 	print('Finish : %d / %d  [Styrofoam : %d] [PET : %d]' % (RawImgIdx, len(ListImg), count_Styrofoam, count_PET))
 
+	# Report
+	if Img_i % 20 == 0:
+		ReportName = 'Monitoring_report_' + str(Img_i) + '.csv'
+		np.savetxt(ReportName, 
+				DataTable, 
+				delimiter=',', 
+				fmt='%3.5f',
+				header='lat,lon,n_styrofoam,n_PET',
+				comments='')
+
+	print('')
+	print(DataTable[Img_i, :])
 
 print('===============================================')
 print('Total Styrofoam : %d , Total PET : %d' % (count_Styrofoam, count_PET))
